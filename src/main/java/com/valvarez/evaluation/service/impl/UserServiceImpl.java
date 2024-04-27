@@ -3,7 +3,8 @@ package com.valvarez.evaluation.service.impl;
 import com.valvarez.evaluation.entity.Phone;
 import com.valvarez.evaluation.entity.User;
 import com.valvarez.evaluation.payload.dto.PhoneDto;
-import com.valvarez.evaluation.payload.dto.UserDto;
+import com.valvarez.evaluation.payload.dto.in.UserDto;
+import com.valvarez.evaluation.payload.dto.out.UserDtoResponse;
 import com.valvarez.evaluation.repository.UserRepository;
 import com.valvarez.evaluation.service.UserService;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto createUser(UserDto userDto) throws Exception {
+    public UserDtoResponse createUser(UserDto userDto) throws Exception {
         try {
 
             User userDtoToUserMapper = User.builder()
@@ -39,10 +40,13 @@ public class UserServiceImpl implements UserService {
                     .build();
 
             User newUser = this.userRepository.save(userDtoToUserMapper);
-            return UserDto.builder()
+            return UserDtoResponse.builder()
+                    .id(newUser.getId())
                     .name(newUser.getName())
                     .email(newUser.getEmail())
-                    .password(newUser.getPassword())
+                    .createdAt(newUser.getCreatedAt())
+                    .updatedAt(newUser.getUpdatedAt())
+                    .lastLogin(newUser.getLastLogin())
                     .phones(newUser.getPhones().stream()
                             .map(PhoneMapper::mapPhoneToPhoneDto)
                             .collect(Collectors.toList()))
