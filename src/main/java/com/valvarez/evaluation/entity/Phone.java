@@ -10,10 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
+@Table(name = "phones")
 @Entity
-class Phone {
+public class Phone {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = false)
@@ -23,5 +24,5 @@ class Phone {
     private String citycode;
 
     @Column(nullable = false)
-    private String countrycode;
+    private String contrycode;
 }

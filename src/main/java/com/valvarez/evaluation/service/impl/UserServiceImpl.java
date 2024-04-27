@@ -10,12 +10,23 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    /**
+     * Constructor para UserServiceImpl.
+     *
+     * @param userRepository Un repositorio para interactuar con entidades de tipo User Entity.
+     * @param userRepository
+     */
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
-    public User createUser(User user) {
-        return this.userRepository.save(user);
+    public User createUser(User user) throws Exception {
+        try {
+            return this.userRepository.save(user);
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+
     }
 }
