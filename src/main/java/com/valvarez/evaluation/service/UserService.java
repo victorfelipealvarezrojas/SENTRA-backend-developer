@@ -1,7 +1,7 @@
 package com.valvarez.evaluation.service;
 
-import com.valvarez.evaluation.entity.User;
+import com.valvarez.evaluation.payload.dto.UserDto;
 
 public interface UserService {
-    User createUser(User user) throws Exception;
+    UserDto createUser(UserDto user) throws Exception;
 }

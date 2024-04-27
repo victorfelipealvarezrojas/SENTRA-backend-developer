@@ -1,6 +1,7 @@
 package com.valvarez.evaluation.controller;
 
 import com.valvarez.evaluation.entity.User;
+import com.valvarez.evaluation.payload.dto.UserDto;
 import com.valvarez.evaluation.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("save")
-    public ResponseEntity<User> saveUser(@RequestBody User userRequest) throws Exception {
+    public ResponseEntity<UserDto> saveUser(@RequestBody UserDto userRequest) throws Exception {
         return new ResponseEntity<>(this.userService.createUser(userRequest), CREATED) ;
     }
 

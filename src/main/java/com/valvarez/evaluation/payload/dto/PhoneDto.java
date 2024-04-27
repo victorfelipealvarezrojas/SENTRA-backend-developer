@@ -1,10 +1,10 @@
 package com.valvarez.evaluation.payload.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import lombok.Builder;
+import lombok.Data;
 
+@Data
+@Builder
 public class PhoneDto {
     private String number;
     private String citycode;
