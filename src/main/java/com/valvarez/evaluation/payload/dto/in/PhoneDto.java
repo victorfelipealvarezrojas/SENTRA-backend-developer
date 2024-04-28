@@ -1,4 +1,4 @@
-package com.valvarez.evaluation.payload.dto;
+package com.valvarez.evaluation.payload.dto.in;
 
 import lombok.Builder;
 import lombok.Data;

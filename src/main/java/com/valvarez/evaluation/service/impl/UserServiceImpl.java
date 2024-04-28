@@ -2,11 +2,13 @@ package com.valvarez.evaluation.service.impl;
 
 import com.valvarez.evaluation.entity.Phone;
 import com.valvarez.evaluation.entity.User;
-import com.valvarez.evaluation.payload.dto.PhoneDto;
+import com.valvarez.evaluation.payload.dto.in.PhoneDto;
 import com.valvarez.evaluation.payload.dto.in.UserDto;
 import com.valvarez.evaluation.payload.dto.out.UserDtoResponse;
 import com.valvarez.evaluation.repository.UserRepository;
 import com.valvarez.evaluation.service.UserService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final  BCryptPasswordEncoder cryptPasswordEncoder;
 
     /**
      * Constructor para UserServiceImpl.
@@ -24,6 +27,7 @@ public class UserServiceImpl implements UserService {
      */
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
+        this.cryptPasswordEncoder = new BCryptPasswordEncoder();
     }
 
     @Override
@@ -33,11 +37,13 @@ public class UserServiceImpl implements UserService {
             User userDtoToUserMapper = User.builder()
                     .name(userDto.getName())
                     .email(userDto.getEmail())
-                    .password(userDto.getPassword())
+                    .password(cryptPasswordEncoder.encode(userDto.getPassword()))
                     .phones(userDto.getPhones().stream()
                             .map(PhoneMapper::mapPhoneDtoToPhone)
                             .collect(Collectors.toList()))
                     .build();
+
+
 
             User newUser = this.userRepository.save(userDtoToUserMapper);
             return UserDtoResponse.builder()

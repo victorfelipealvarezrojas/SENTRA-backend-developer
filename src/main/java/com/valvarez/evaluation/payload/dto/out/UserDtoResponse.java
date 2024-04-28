@@ -1,7 +1,7 @@
 package com.valvarez.evaluation.payload.dto.out;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.valvarez.evaluation.payload.dto.PhoneDto;
+import com.valvarez.evaluation.payload.dto.in.PhoneDto;
 import lombok.Builder;
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.valvarez.evaluation.payload;
+package com.valvarez.evaluation.payload.dto.out;
 
 import java.util.Date;
 
