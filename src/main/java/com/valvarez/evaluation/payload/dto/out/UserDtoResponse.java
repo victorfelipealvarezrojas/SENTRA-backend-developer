@@ -21,5 +21,7 @@ public class UserDtoResponse {
     private LocalDateTime updatedAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastLogin;
+    private boolean isActive;
     private List<PhoneDto> phones;
+    private String token;
 }

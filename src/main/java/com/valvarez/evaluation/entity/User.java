@@ -42,6 +42,12 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime lastLogin;
 
+    @Column(nullable = false)
+    private String token;
+
+    @Column(nullable = false)
+    private boolean isActive;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id")
     private List<Phone> phones;

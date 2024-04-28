@@ -6,7 +6,9 @@ import com.valvarez.evaluation.payload.dto.in.PhoneDto;
 import com.valvarez.evaluation.payload.dto.in.UserDto;
 import com.valvarez.evaluation.payload.dto.out.UserDtoResponse;
 import com.valvarez.evaluation.repository.UserRepository;
+import com.valvarez.evaluation.security.JwtTokenProvider;
 import com.valvarez.evaluation.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,17 +19,14 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final  BCryptPasswordEncoder cryptPasswordEncoder;
+    private final BCryptPasswordEncoder cryptPasswordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    /**
-     * Constructor para UserServiceImpl.
-     *
-     * @param userRepository Un repositorio para interactuar con entidades de tipo User Entity.
-     * @param userRepository
-     */
-    public UserServiceImpl(UserRepository userRepository) {
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder cryptPasswordEncoder, JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
-        this.cryptPasswordEncoder = new BCryptPasswordEncoder();
+        this.cryptPasswordEncoder = cryptPasswordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -38,12 +37,12 @@ public class UserServiceImpl implements UserService {
                     .name(userDto.getName())
                     .email(userDto.getEmail())
                     .password(cryptPasswordEncoder.encode(userDto.getPassword()))
+                    .token(jwtTokenProvider.generateToken(userDto))
+                    .isActive(true)
                     .phones(userDto.getPhones().stream()
                             .map(PhoneMapper::mapPhoneDtoToPhone)
                             .collect(Collectors.toList()))
                     .build();
-
-
 
             User newUser = this.userRepository.save(userDtoToUserMapper);
             return UserDtoResponse.builder()
@@ -53,6 +52,8 @@ public class UserServiceImpl implements UserService {
                     .createdAt(newUser.getCreatedAt())
                     .updatedAt(newUser.getUpdatedAt())
                     .lastLogin(newUser.getLastLogin())
+                    .isActive(newUser.isActive())
+                    .token(newUser.getToken())
                     .phones(newUser.getPhones().stream()
                             .map(PhoneMapper::mapPhoneToPhoneDto)
                             .collect(Collectors.toList()))

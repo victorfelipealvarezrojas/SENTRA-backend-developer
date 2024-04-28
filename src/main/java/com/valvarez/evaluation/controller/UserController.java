@@ -20,7 +20,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("save")
+    @PostMapping("register")
     public ResponseEntity<UserDtoResponse> saveUser(@Valid @RequestBody UserDto userRequest) throws Exception {
         return new ResponseEntity<>(this.userService.createUser(userRequest), CREATED) ;
     }
