@@ -5,9 +5,9 @@ import com.valvarez.evaluation.entity.User;
 import com.valvarez.evaluation.payload.dto.in.PhoneDto;
 import com.valvarez.evaluation.payload.dto.in.UserDto;
 import com.valvarez.evaluation.payload.dto.out.UserDtoResponse;
-import com.valvarez.evaluation.service.impl.UserServiceImpl;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -23,6 +23,12 @@ public class DtoMapper {
                         .map(this::mapPhoneDtoToPhone)
                         .collect(Collectors.toList()))
                 .build();
+    }
+
+    public List<UserDtoResponse> mapToDtoResponseList(List<User> userList) {
+        return userList.stream()
+                .map(this::mapToDtoResponse)
+                .collect(Collectors.toList());
     }
 
     public UserDtoResponse mapToDtoResponse(User user){

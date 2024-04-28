@@ -1,9 +1,8 @@
 package com.valvarez.evaluation.service.impl;
 
-import com.valvarez.evaluation.entity.Phone;
 import com.valvarez.evaluation.entity.User;
 import com.valvarez.evaluation.exception.BlogApiException;
-import com.valvarez.evaluation.payload.dto.in.PhoneDto;
+import com.valvarez.evaluation.exception.ResourceNotFoundException;
 import com.valvarez.evaluation.payload.dto.in.UserDto;
 import com.valvarez.evaluation.payload.dto.out.UserDtoResponse;
 import com.valvarez.evaluation.payload.mapper.DtoMapper;
@@ -14,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,9 +37,13 @@ public class UserServiceImpl implements UserService {
         this.dtoMapper = dtoMapper;
     }
 
+
     @Override
     public UserDtoResponse createUser(UserDto userDto) throws Exception {
         try {
+
+            if (userRepository.existsByName(userDto.getName()))
+                throw new BlogApiException(HttpStatus.BAD_REQUEST, "El Nombre de usuario ya está registrado");
 
             if (userRepository.existsByEmail(userDto.getEmail()))
                 throw new BlogApiException(HttpStatus.BAD_REQUEST, "El correo ya está registrado");
@@ -53,23 +60,39 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public static class PhoneMapper {
+    @Override
+    public UserDtoResponse updateUser(UUID id, UserDto userDto) throws Exception {
+        User usuario = this.userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Usuario", "id", id));
 
-        public static Phone mapPhoneDtoToPhone(PhoneDto phoneDto) {
-            return Phone.builder()
-                    .number(phoneDto.getNumber())
-                    .citycode(phoneDto.getCitycode())
-                    .contrycode(phoneDto.getContrycode())
-                    .build();
-        }
-
-        public static PhoneDto mapPhoneToPhoneDto(Phone phone) {
-            return PhoneDto.builder()
-                    .number(phone.getNumber())
-                    .citycode(phone.getCitycode())
-                    .contrycode(phone.getContrycode())
-                    .build();
-        }
+        String pass = cryptPasswordEncoder.encode(userDto.getPassword());
+        usuario.setActive(true);
+        usuario.setName(userDto.getName());
+        usuario.setEmail(userDto.getEmail());
+        usuario.setUpdatedAt(LocalDateTime.now());
+        usuario.setPassword(pass);
+        return this.dtoMapper.mapToDtoResponse(this.userRepository.save(usuario));
     }
 
+    @Override
+    public List<UserDtoResponse> getAllUsers() throws Exception {
+        List<User> users = this.userRepository.findAll();
+        if (users.isEmpty()) return null;
+        return this.dtoMapper.mapToDtoResponseList(users);
+    }
+
+    @Override
+    public UserDtoResponse getUsersById(UUID id) throws Exception {
+        User user = this.userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Usuario", "id", id));
+        return this.dtoMapper.mapToDtoResponse(user);
+    }
+
+    @Override
+    public void deleteUser(UUID id) throws Exception {
+        User usuario = this.userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Usuario", "id", id));
+        this.userRepository.delete(usuario);
+    }
 }
