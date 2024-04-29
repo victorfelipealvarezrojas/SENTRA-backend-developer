@@ -21,6 +21,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/api/users/**").permitAll()
+                        .requestMatchers("localhost:8080/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui/index.html").permitAll()
                 ).httpBasic(Customizer.withDefaults());
 
         return http.build();
